@@ -1,5 +1,41 @@
 import streamlit as st
-import requests
+import pandas as pd
+import joblib
+
+# --- BACKEND LOGIC (Previously FastAPI) ---
+
+# This function mimics the "API" behavior internally
+def get_analysis_data(tag):
+    try:
+        df = pd.read_csv("EEAMB.csv")
+        model = joblib.load("eeamb_model.pkl")
+        
+        FEATURES = ["VR","VY","VB","IR","IY","IB","temperature","MW","MVAR","MVA"]
+
+        data = df[df["tag"] == tag]
+
+        if data.empty:
+            row = df.sample(1).iloc[0]
+        else:
+            row = data.iloc[0]
+
+        # Prediction Logic
+        input_data = pd.DataFrame([row])[FEATURES]
+        fault = model.predict(input_data)[0]
+        load = row["load_percent"]
+
+        return {
+            "tag": tag,
+            "equipment": row["equipment"],
+            "fault": fault,
+            "load": load,
+            "status": "success"
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+
+# --- FRONTEND LOGIC (Streamlit UI) ---
 
 st.title("⚡ EEAMB - Electrical Equipment Analysis")
 
@@ -15,11 +51,10 @@ if st.button("Analyze"):
     if tag == "":
         st.warning("Enter Tag Number")
     else:
-        url = f"http://127.0.0.1:8000/analyze/{tag}"
+        # Instead of requests.get, we call the function directly
+        res = get_analysis_data(tag)
 
-        try:
-            res = requests.get(url).json()
-
+        if res["status"] == "success":
             st.subheader("🧾 Equipment Details")
             st.write("Tag:", res["tag"])
             st.write("Equipment:", res["equipment"])
@@ -31,7 +66,6 @@ if st.button("Analyze"):
                 st.write("Fault:", res["fault"])
 
             elif mode == "Full Output":
-
                 st.subheader("🚨 Fault Analysis")
                 st.write("Fault:", res["fault"])
                 st.write("Load:", res["load"], "%")
@@ -43,17 +77,16 @@ if st.button("Analyze"):
 
                 st.subheader("🧠 Reason")
                 st.write("""
-Overload condition occurred due to current exceeding 120% of rated capacity
+                Overload condition occurred due to current exceeding 120% of rated capacity
 
-Possible Causes:
-- Excess mechanical load
-- Bearing failure
-- Voltage imbalance
-- Cooling failure
+                Possible Causes:
+                - Excess mechanical load
+                - Bearing failure
+                - Voltage imbalance
+                - Cooling failure
                 """)
 
                 st.subheader("🔧 Maintenance")
                 st.write("Predictive + Corrective Required")
-
-        except:
-            st.error("⚠️ API not running. Start API first.")
+        else:
+            st.error(f"⚠️ Error: {res['message']}")
