@@ -1,5 +1,5 @@
 # =========================================
-# ⚡ EEAMB STREAMLIT (NO API VERSION)
+# ⚡ EEAMB STREAMLIT
 # FULL SINGLE FILE - PRO CLEAN
 # =========================================
 import streamlit as st
@@ -13,14 +13,13 @@ from pathlib import Path
 
 # Page Configuration
 st.set_page_config(page_title="EEAMB", layout="wide")
-
 # =========================================
 # DYNAMIC PATH SETTINGS (FIXES THE ERROR)
 # =========================================
-import pandas as pd
-df = pd.read_csv('EEAMB.csv')
+BASE_DIR = Path(__file__).parent
 DATA_PATH = BASE_DIR / "EEAMB.csv"
 MODEL_PATH = BASE_DIR / "eeamb_model.pk1"
+df = pd.read_csv('EEAMB.csv')
 
 # =========================================
 # LOAD / TRAIN MODEL
