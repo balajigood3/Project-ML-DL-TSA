@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score
 print("Libraries Loaded successfully")
 # Load Dataset
 
-df = pd.read_csv("EEAMB.csv")
+df = pd.read_csv(r"c:\Balaji-AI\MY PROJECTS\EEE\EEAMB.csv")
 df.info()
 df.columns
 # Features
@@ -30,11 +30,11 @@ acc = accuracy_score(y_test, pred)
 print("Model Accuracy:", acc)
 # Save Model
 import joblib
-joblib.dump(model, "eeamb_model.pk1")
+joblib.dump(model, r"c:\Balaji-AI\MY PROJECTS\EEE\eeamb_model.pk1")
 print("Model Saved")
 # Prediction Function
 import joblib
-model = joblib.load("eeamb_model.pk1")
+model = joblib.load(r"c:\Balaji-AI\MY PROJECTS\EEE\eeamb_model.pk1")
 
 def predict_fault(vr, vy, vb, ir, iy, ib, temp, mw, mvar, mva):
     data = [[vr, vy, vb, ir, iy, ib, temp, mw, mvar, mva]]
