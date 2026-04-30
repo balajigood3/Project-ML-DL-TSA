@@ -17,12 +17,10 @@ st.set_page_config(page_title="EEAMB", layout="wide")
 # =========================================
 # DYNAMIC PATH SETTINGS (FIXES THE ERROR)
 # =========================================
-# This automatically finds the folder where app.py is saved
-BASE_DIR = Path(__file__).parent
-
-# We look for the files inside a folder named 'data'
-DATA_PATH = BASE_DIR / "data" / "EEAMB.csv"
-MODEL_PATH = BASE_DIR / "data" / "eeamb_model.pk1"
+import pandas as pd
+df = pd.read_csv('EEAMB.csv')
+DATA_PATH = BASE_DIR / "EEAMB.csv"
+MODEL_PATH = BASE_DIR / "eeamb_model.pk1"
 
 # =========================================
 # LOAD / TRAIN MODEL
